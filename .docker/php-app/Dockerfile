@@ -1,6 +1,7 @@
 FROM php:8.4-fpm
 
-ARG UID, GID
+ARG UID
+ARG GID
 
 # Set working directory
 WORKDIR /var/www
@@ -51,7 +52,8 @@ RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
 
 COPY ./start.sh /usr/local/bin/start
 
-RUN usermod -u $UID www-data
+RUN groupmod -o -g $GID www-data \
+    && usermod -o -u $UID -g $GID www-data
 
 RUN chmod u+x /usr/local/bin/start
 RUN chown www-data:www-data /usr/local/bin/start
