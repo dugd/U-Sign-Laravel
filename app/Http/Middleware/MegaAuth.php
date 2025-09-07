@@ -16,7 +16,7 @@ class MegaAuth
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->query('secret') !== "eighteen") {
-            return \redirect('/');
+            return abort('403', 'guess the value of "?secret" query :)');
         }
         return $next($request);
     }
