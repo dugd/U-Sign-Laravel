@@ -3,6 +3,7 @@
 @section('title', 'Головна')
 
 @section('content')
-    <h1>Welcome to USign!</h1>
-    <p>{{$welcome ?? "bimbim."}}</p>
+    <h1>Your profile</h1>
+    <p>Name: Dugd_Nitkin</p>
+    <p>Age: 999</p>
 @endsection

@@ -10,4 +10,10 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function custom(Request $request)
+    {
+        $welcome_text = $request->route('welcome');
+        return view('home', ['welcome' => $welcome_text]);
+    }
 }

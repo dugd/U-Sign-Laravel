@@ -11,3 +11,5 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Secure
 Route::get('/profile', [ProfileController::class, 'show'])->name('profile')->middleware(MegaAuth::class);
+
+Route::get('/{welcome}', [HomeController::class, 'custom']);
