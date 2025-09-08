@@ -11,7 +11,7 @@ class SignController extends Controller
      */
     public function index()
     {
-        //
+        return 'hahaha';
     }
 
     /**
@@ -19,7 +19,7 @@ class SignController extends Controller
      */
     public function create()
     {
-        //
+        return 'creating...';
     }
 
     /**
