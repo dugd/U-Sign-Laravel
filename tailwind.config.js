@@ -1,1 +1,9 @@
-export default { content: ['./resources/**/*.blade.php'], theme: { extend: {} }, plugins: [] };
+/** @type {import('tailwindcss').Config} */
+export default {
+    content: ['./resources/**/*.blade.php'],
+    theme: {
+        colors: {},
+        extend: {}
+    },
+    plugins: []
+};
