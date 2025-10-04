@@ -2,16 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gesture;
+use App\Models\GestureTranslation;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class GestureController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() : View
     {
-        //
+        $gestures = Gesture::with('translations')->get();
+        // Oh sheesh...
+        $gestures = $gestures->map(function ($gesture) {
+            return (object) [
+                'id' => $gesture->id,
+                'title' => $gesture->translations[0]->title,
+                'description' => $gesture->translations[0]->description,
+                'video_path' => $gesture->translations[0]->video_path,
+                'language_code' => $gesture->translations[0]->language_code,
+                ];
+        });
+        return view('gestures.index', ['gestures' => $gestures]);
     }
 
     /**
