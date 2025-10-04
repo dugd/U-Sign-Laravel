@@ -3,7 +3,11 @@
 @section('title', 'Головна')
 
 @section('content')
-    <h1>Your profile</h1>
-    <p>Name: Dugd_Nitkin</p>
-    <p>Age: 999</p>
+    <section class="text-center mb-10">
+        <h1 class="text-3xl font-bold mb-2">Твій профіль</h1>
+    </section>
+    <section>
+        <p>Name: <strong>Dugd_Nitkin</strong></p>
+        <p>Age: <strong>999</strong></p>
+    </section>
 @endsection
