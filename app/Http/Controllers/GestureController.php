@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class SignController extends Controller
+class GestureController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return 'hahaha';
+        //
     }
 
     /**
@@ -19,7 +19,7 @@ class SignController extends Controller
      */
     public function create()
     {
-        return 'creating...';
+        //
     }
 
     /**
