@@ -14,21 +14,52 @@ class GestureController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() : View
+    public function index(Request $request) : View
     {
-        // TODO: Gestures list
-        $gestures = Gesture::with('translations')->get();
-        // Oh sheesh...
-        $gestures = $gestures->map(function ($gesture) {
-            return (object) [
-                'id' => $gesture->id,
-                'title' => $gesture->translations[0]->title,
-                'description' => $gesture->translations[0]->description,
-                'video_path' => $gesture->translations[0]->video_path,
-                'language_code' => $gesture->translations[0]->language_code,
-                ];
-        });
-        return view('gestures.index', ['gestures' => $gestures]);
+        $lang = (string) $request->query('lang', '');
+        $q = (string) $request->query('q', '');
+        $hasVideo = $request->boolean('has_video', false);
+
+        $query = Gesture::query()
+            ->with(['author', 'translations' => function ($t) use ($lang) {
+                if ($lang) {
+                    $t->where('language_code', $lang);
+                }
+            }]);
+
+        if ($q !== '') {
+            $query->whereHas('translations', function ($t) use ($q, $lang) {
+                $t->where(function ($w) use ($q) {
+                    $w->where('title', 'like', "%{$q}%")
+                        ->orWhere('description', 'like', "%{$q}%");
+                });
+            });
+        }
+
+        if ($hasVideo) {
+            $query->whereHas('translations', function ($t) use ($lang) {
+                $t->whereNotNull('video_path');
+            });
+        }
+
+        $gestures = $query
+            ->latest('id')
+            ->paginate(12)
+            ->withQueryString();
+
+        $languages = GestureTranslation::query()
+            ->select('language_code')
+            ->distinct()
+            ->orderBy('language_code')
+            ->pluck('language_code');
+
+        return view('gestures.index', [
+            'gestures'  => $gestures,
+            'languages' => $languages,
+            'lang'      => $lang,
+            'q'         => $q,
+            'hasVideo'  => $hasVideo,
+        ]);
     }
 
     /**
