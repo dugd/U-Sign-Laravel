@@ -15,13 +15,24 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::middleware('auth')->group(function () {
+    Route::resource('gestures', GestureController::class)
+        ->parameters(['gestures' => 'gesture'])
+        ->only(['create', 'store', 'edit', 'update', 'destroy'])
+        ->names('gestures');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/gestures/{gesture}/comments', [CommentController::class, 'store'])
+        ->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
+        ->name('comments.destroy');
+});
+
 Route::resource('gestures', GestureController::class)
     ->parameters(['gestures' => 'gesture'])
     ->only(['index', 'show'])
-    ->names([
-        'index' => 'gestures.index',
-        'show'  => 'gestures.show',
-    ]);
+    ->names('gestures');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -37,21 +48,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::post('/gestures/{gesture}/comments', [CommentController::class, 'store'])
-        ->name('comments.store');
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
-        ->name('comments.destroy');
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/gestures/create', [GestureController::class, 'create'])->name('gestures.create');
-    Route::post('/gestures', [GestureController::class, 'store'])->name('gestures.store');
-    Route::get('/gestures/{gesture}/edit', [GestureController::class, 'edit'])->name('gestures.edit');
-    Route::put('/gestures/{gesture}', [GestureController::class, 'update'])->name('gestures.update');
-    Route::delete('/gestures/{gesture}', [GestureController::class, 'destroy'])->name('gestures.destroy');
-});
 
 Route::prefix('admin')->as('admin.')
     ->middleware(['auth', 'can:admin'])
