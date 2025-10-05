@@ -9,6 +9,7 @@ class HomeController extends Controller
 {
     public function index() : View
     {
+        // TODO: Main page
         return view('home');
     }
 }

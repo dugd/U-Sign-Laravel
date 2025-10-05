@@ -14,6 +14,7 @@ class GestureController extends Controller
      */
     public function index() : View
     {
+        // TODO: Gestures list
         $gestures = Gesture::with('translations')->get();
         // Oh sheesh...
         $gestures = $gestures->map(function ($gesture) {
