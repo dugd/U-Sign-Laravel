@@ -1,30 +1,132 @@
 <x-site-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <section class="text-center mb-10">
-                        <h1 class="text-3xl font-bold mb-2">Словник жестової мови</h1>
-                    </section>
+    <x-site-container>
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold">Gestures</h1>
+            <p class="text-gray-600 mt-1">Browse, filter and discover sign gestures.</p>
+        </header>
 
-                    <section>
-                        <h2 class="text-xl font-semibold mb-4">Перелік жестів:</h2>
+        {{-- Filters --}}
+        <section>
+            <header>
+                <h2 class="text-lg font-medium text-gray-900">
+                    {{ __('Filters') }}
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    {{ __('Refine your search by language, keyword or available video.') }}
+                </p>
+            </header>
 
-                        <div class="grid gap-6 md:grid-cols-3">
-                            @forelse($gestures as $gesture)
-                                <a href="{{ route('gestures.show', $gesture->id) }}" class="block bg-white shadow rounded p-4 hover:shadow-md">
-                                    <video src="{{ Storage::url($gesture->video_path) }}" class="w-full rounded mb-2" controls></video>
-                                    <h3 class="text-xl font-medium">{{ $gesture->title }}</h3>
-                                    <p class="">{{ trim(mb_substr($gesture->description, 0, 100)) . "..." }}</p>
-                                    <p class="text-sm text-gray-500">{{ $gesture->language_code }}</p>
-                                </a>
-                            @empty
-                                <p class="text-gray-500">Нема :(</p>
-                            @endforelse
-                        </div>
-                    </section>
+            <form method="GET" class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                {{-- Language --}}
+                <div class="md:col-span-2">
+                    <x-select
+                        id="lang"
+                        name="lang"
+                        label="Language"
+                        :value="$lang"
+                        :options="$languages->mapWithKeys(fn($c) => [$c => strtoupper($c)])"
+                        placeholder="All languages"
+                    />
                 </div>
+
+                {{-- Search --}}
+                <div class="md:col-span-2">
+                    <x-input-label for="q" :value="__('Search')" />
+                    <x-text-input
+                        id="q"
+                        name="q"
+                        type="text"
+                        class="mt-1 block w-full"
+                        :value="$q"
+                        placeholder="{{ __('Search by title or description') }}"
+                    />
+                </div>
+
+                {{-- With video --}}
+                <div class="flex items-end">
+                    <x-checkbox
+                        id="has_video"
+                        name="has_video"
+                        :checked="$hasVideo"
+                        :label="__('With video only')"
+                    />
+                </div>
+
+                {{-- Buttons --}}
+                <div class="md:col-span-4 flex items-center gap-3 mt-2">
+                    <x-primary-button>{{ __('Apply filters') }}</x-primary-button>
+                    <a href="{{ route('gestures.index') }}" class="text-sm text-gray-600 underline hover:no-underline">
+                        {{ __('Reset') }}
+                    </a>
+                </div>
+            </form>
+        </section>
+
+        {{-- Cards --}}
+        @if($gestures->count())
+            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                @foreach($gestures as $gesture)
+                    @php
+                        $preferredTranslation =
+                            ($lang ? $gesture->translations->firstWhere('language_code', $lang) : null)
+                            ?? $gesture->translations->firstWhere('language_code', $gesture->canonical_language_code)
+                            ?? $gesture->translations->first();
+
+                        $title = $preferredTranslation?->title ?? 'Untitled gesture';
+                        $language = $preferredTranslation?->language_code ?? ($lang ?: $gesture->canonical_language_code ?? 'n/a');
+                        $videoPath = $preferredTranslation?->video_path ?? null;
+                        $videoUrl = $videoPath ? Storage::disk('public')->url($videoPath) : null;
+                    @endphp
+
+                    <article class="rounded-2xl border border-gray-200 overflow-hidden bg-white">
+                        @if($videoUrl)
+                            <a href="{{ route('gestures.show', $gesture) }}" class="block">
+                                <video src="{{ $videoUrl }}" muted loop playsinline preload="metadata"
+                                       class="w-full aspect-video object-cover bg-black"></video>
+                            </a>
+                        @else
+                            <a href="{{ route('gestures.show', $gesture) }}" class="block">
+                                <div class="w-full aspect-video bg-gray-100 flex items-center justify-center text-gray-400">
+                                    No video
+                                </div>
+                            </a>
+                        @endif
+
+                        <div class="p-4 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-semibold line-clamp-1">
+                                    <a class="hover:underline" href="{{ route('gestures.show', $gesture) }}">
+                                        {{ $title }}
+                                    </a>
+                                </h3>
+                                <span class="text-xs px-2 py-0.5 rounded bg-gray-100">{{ strtoupper($language) }}</span>
+                            </div>
+
+                            @if($preferredTranslation?->description)
+                                <p class="text-sm text-gray-600 line-clamp-2">
+                                    {{ $preferredTranslation->description }}
+                                </p>
+                            @endif
+
+                            <div class="flex items-center justify-between text-xs text-gray-500 pt-1">
+                                <span>By {{ $gesture->author?->name ?? 'Unknown' }}</span>
+                                <span>{{ $gesture->created_at?->format('Y-m-d') }}</span>
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
             </div>
-        </div>
-    </div>
+
+            {{-- Pagination --}}
+            <div class="mt-8">
+                {{ $gestures->onEachSide(1)->links() }}
+            </div>
+        @else
+            <div class="mt-8 rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-600">
+                {{ __('No gestures found. Try changing filters.') }}
+            </div>
+        @endif
+
+        <x-site-session-status :status="session('status')"/>
+    </x-site-container>
 </x-site-layout>

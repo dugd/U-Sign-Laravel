@@ -12,13 +12,13 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-4 sm:flex">
-                    <x-nav-link :href="route('gestures.index')" :active="request()->routeIs('gestures.index')">
-                        {{ __('Gestures') }}
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('My') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-4 sm:flex">
-                    <x-nav-link :href="route('gestures.index')" :active="request()->routeIs('gestures.index')">
-                        {{ __('Gestures') }}
+                    <x-nav-link :href="route('gestures.create')" :active="request()->routeIs('gestures.create')">
+                        {{ __('Create') }}
                     </x-nav-link>
                 </div>
                 {{-- Add here --}}
@@ -69,6 +69,8 @@
     <div :class="{'block': open, 'hidden': !open}" class="sm:hidden hidden border-t border-gray-100">
         <div class="px-4 py-3 space-y-1">
             <a href="{{ route('gestures.index') }}" class="block text-gray-700">Gestures</a>
+            <a href="{{ route('dashboard') }}" class="block text-gray-700">My</a>
+            <a href="{{ route('gestures.create') }}" class="block text-gray-700">Create</a>
             @auth
                 @can('admin')
                     <a href="{{ route('admin.dashboard') }}" class="block text-gray-700">Admin Panel</a>
