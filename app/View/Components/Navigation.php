@@ -24,7 +24,7 @@ class Navigation extends Component
         $menuItems = [
             ['title' => 'Home', 'url' => route('home')],
             ['title' => 'Profile', 'url' => route('profile')],
-            ['title' => 'Signes', 'url' => route('signes')],
+            ['title' => 'Gestures', 'url' => route('gestures.index')],
         ];
 
         return view('components.navigation', ['menuItems' => $menuItems]);

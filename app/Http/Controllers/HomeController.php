@@ -3,17 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index() : View
     {
+        // TODO: Main page
         return view('home');
-    }
-
-    public function custom(Request $request)
-    {
-        $welcome_text = $request->route('welcome');
-        return view('home', ['welcome' => $welcome_text]);
     }
 }

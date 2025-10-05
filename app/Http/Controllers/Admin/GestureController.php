@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Models\Gesture;
 use Illuminate\Http\Request;
 
-class SignController extends Controller
+class GestureController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return 'hahaha';
+        //
     }
 
     /**
@@ -19,7 +21,7 @@ class SignController extends Controller
      */
     public function create()
     {
-        return 'creating...';
+        //
     }
 
     /**
@@ -33,7 +35,7 @@ class SignController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Gesture $gesture)
     {
         //
     }
@@ -41,7 +43,7 @@ class SignController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Gesture $gesture)
     {
         //
     }
@@ -49,7 +51,7 @@ class SignController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Gesture $gesture)
     {
         //
     }
@@ -57,7 +59,7 @@ class SignController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Gesture $gesture)
     {
         //
     }
