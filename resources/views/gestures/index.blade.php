@@ -13,7 +13,7 @@
                         <div class="grid gap-6 md:grid-cols-3">
                             @forelse($gestures as $gesture)
                                 <a href="{{ route('gestures.show', $gesture->id) }}" class="block bg-white shadow rounded p-4 hover:shadow-md">
-                                    <video src="{{ $gesture->video_path }}" class="w-full rounded mb-2" controls></video>
+                                    <video src="{{ Storage::url($gesture->video_path) }}" class="w-full rounded mb-2" controls></video>
                                     <h3 class="text-xl font-medium">{{ $gesture->title }}</h3>
                                     <p class="">{{ trim(mb_substr($gesture->description, 0, 100)) . "..." }}</p>
                                     <p class="text-sm text-gray-500">{{ $gesture->language_code }}</p>
