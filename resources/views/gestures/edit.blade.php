@@ -1,7 +1,6 @@
 <x-site-layout>
     @section('title', 'Edit Gesture')
-
-    <div class="max-w-3xl mx-auto px-4 py-8">
+    <x-site-container>
         <h1 class="text-2xl font-semibold mb-6">Edit Gesture</h1>
 
         <form method="POST" action="{{ route('gestures.update', $gesture) }}" enctype="multipart/form-data" class="space-y-6">
@@ -70,5 +69,5 @@
                 <a href="{{ route('gestures.show', $gesture) }}" class="text-sm text-gray-600 hover:text-gray-900">Cancel</a>
             </div>
         </form>
-    </div>
+    </x-site-container>
 </x-site-layout>

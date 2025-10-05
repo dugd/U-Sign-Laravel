@@ -79,7 +79,21 @@ class GestureController extends Controller
      */
     public function show(Gesture $gesture)
     {
-        //
+        $gesture->load([
+            'author',
+            'translations',
+            'comments.user',
+        ]);
+
+        $translation = $gesture->translations
+            ->firstWhere('language_code', $gesture->canonical_language_code)
+            ?? $gesture->translations->first();
+
+        $videoUrl = $translation?->video_path
+            ? Storage::disk('public')->url($translation->video_path)
+            : null;
+
+        return view('gestures.show', compact('gesture', 'translation', 'videoUrl'));
     }
 
     /**
