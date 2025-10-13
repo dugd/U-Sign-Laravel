@@ -54,11 +54,11 @@ class GestureController extends Controller
             ->pluck('language_code');
 
         return view('gestures.index', [
-            'gestures'  => $gestures,
+            'gestures' => $gestures,
             'languages' => $languages,
-            'lang'      => $lang,
-            'q'         => $q,
-            'hasVideo'  => $hasVideo,
+            'lang' => $lang,
+            'q' => $q,
+            'hasVideo' => $hasVideo,
         ]);
     }
 
