@@ -24,6 +24,8 @@ class User extends Authenticatable
         'password',
         'avatar',
         'role',
+        'vanity_slug',
+        'fingerspelling_gesture_id',
     ];
 
     /**
@@ -56,6 +58,11 @@ class User extends Authenticatable
 
     public function comments() {
         return $this->hasMany(Comment::class);
+    }
+
+    public function fingerspellingGesture()
+    {
+        return $this->belongsTo(Gesture::class, 'fingerspelling_gesture_id');
     }
 
     public function isAdmin() : bool {

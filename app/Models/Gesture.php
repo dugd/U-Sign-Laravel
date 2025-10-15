@@ -10,7 +10,7 @@ class Gesture extends Model
     /** @use HasFactory<\Database\Factories\GestureFactory> */
     use HasFactory;
 
-    protected $fillable = ['slug','created_by','canonical_language_code'];
+    protected $fillable = ['slug','created_by','canonical_language_code','visibility'];
 
     public function translations() {
         return $this->hasMany(GestureTranslation::class);
