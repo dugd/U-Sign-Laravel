@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use App\Services\QuotaService;
+use App\Services\FeatureGate;
 
 class GestureController extends Controller
 {
@@ -78,12 +80,21 @@ class GestureController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', Gesture::class);
-
+        $user = $request->user();
+        $quotaService = app(QuotaService::class);
+        $featureGate = app(FeatureGate::class);
+        if (!$quotaService->canCreate($user)) {
+            return back()->withErrors(['limit' => 'Gesture limit reached for your plan.']);
+        }
+        if ($request->input('visibility') === 'private' && !$featureGate->allow($user, 'gesture.private')) {
+            return back()->withErrors(['visibility' => 'Private gestures are not allowed for your plan.']);
+        }
         DB::transaction(function () use ($request) {
             $gesture = Gesture::create([
                 'slug' => $request->string('slug'),
                 'canonical_language_code' => $request->string('canonical_language_code'),
                 'created_by' => $request->user()->id,
+                'visibility' => $request->input('visibility', 'public'),
             ]);
 
             $videoPath = null;
@@ -147,11 +158,16 @@ class GestureController extends Controller
     public function update(Request $request, Gesture $gesture)
     {
         $this->authorize('update', $gesture);
-
+        $user = $request->user();
+        $featureGate = app(FeatureGate::class);
+        if ($request->input('visibility') === 'private' && !$featureGate->allow($user, 'gesture.private')) {
+            return back()->withErrors(['visibility' => 'Private gestures are not allowed for your plan.']);
+        }
         DB::transaction(function () use ($request, $gesture) {
             $gesture->update([
                 'slug' => $request->string('slug'),
                 'canonical_language_code' => $request->string('canonical_language_code'),
+                'visibility' => $request->input('visibility', 'public'),
             ]);
 
             $translation = $gesture->translations()
@@ -192,6 +208,9 @@ class GestureController extends Controller
      */
     public function destroy(Gesture $gesture)
     {
-        //
+        $this->authorize('delete', $gesture);
+
+        $gesture->delete();
+        return redirect()->route('gestures.index')->with('status', 'Gesture deleted.');
     }
 }

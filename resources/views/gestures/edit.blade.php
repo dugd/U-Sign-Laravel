@@ -3,6 +3,25 @@
     <x-site-container>
         <h1 class="text-2xl font-semibold mb-6">Edit Gesture</h1>
 
+        {{-- used/limit --}}
+        @php
+            $user = \Illuminate\Support\Facades\Auth::user();
+            $quotaService = app(\App\Services\QuotaService::class);
+            $featureGate = app(\App\Services\FeatureGate::class);
+            $used = $quotaService->used($user);
+            $plan = $user->plan ?? 'free';
+            $limit = $quotaService->limitFor($plan);
+            $canCreate = $quotaService->canCreate($user);
+        @endphp
+        <div class="mb-4 text-sm text-gray-700">
+            Gestures used: <span class="font-bold">{{ $used }}</span>
+            @if($limit !== null)
+                / <span class="font-bold">{{ $limit }}</span>
+            @else
+                / <span class="font-bold">∞</span>
+            @endif
+        </div>
+
         <form method="POST" action="{{ route('gestures.update', $gesture) }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
@@ -18,6 +37,17 @@
                 <x-input-label for="canonical_language_code" :value="__('Canonical language code')" />
                 <x-text-input id="canonical_language_code" name="canonical_language_code" type="text" class="mt-1 block w-full" value="{{ old('canonical_language_code', $gesture->canonical_language_code) }}" />
                 <x-input-error :messages="$errors->get('canonical_language_code')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-select
+                        id="visibility"
+                        name="visibility"
+                        label="Visibility"
+                        :value="old('visibility', $gesture->visibility)"
+                        :options="$featureGate->allow($user, 'gesture.private') ? ['public', 'private'] : ['public']"
+                    />
+                <x-input-error :messages="$errors->get('visibility')" class="mt-2" />
             </div>
 
             {{-- Translation --}}
@@ -57,16 +87,20 @@
                 @endif
 
                 <div>
-                    <x-input-label for="translation_video" :value="__('Replace video (optional)')" />
+                    <x-input-label for="translation_video" :value="__('Video file (optional)')" />
                     <input id="translation_video" name="translation[video]" type="file" accept="video/mp4,video/webm,video/quicktime" class="mt-2 block w-full text-sm text-gray-700" />
-                    <p class="mt-1 text-xs text-gray-500">MP4/WebM/MOV, up to 50 MB.</p>
                     <x-input-error :messages="$errors->get('translation.video')" class="mt-2" />
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <x-primary-button>Save</x-primary-button>
-                <a href="{{ route('gestures.show', $gesture) }}" class="text-sm text-gray-600 hover:text-gray-900">Cancel</a>
+                <x-primary-button type="submit" :disabled="!$canCreate">
+                    Update Gesture
+                </x-primary-button>
+                @if(!$canCreate)
+                    <span class="ml-2 text-red-500 text-sm">Gesture limit reached for your plan.</span>
+                @endif
+                <a href="{{ route('gestures.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Cancel</a>
             </div>
         </form>
     </x-site-container>
