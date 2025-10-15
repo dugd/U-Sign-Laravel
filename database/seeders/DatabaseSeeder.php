@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Gesture;
 use App\Models\GestureTranslation;
 use App\Models\User;
+use \App\Models\Subscription;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +19,21 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        $users = User::factory(5)->create();
+        $admin = User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'role' => 'admin',
+        ]);
+
+        $users = User::factory(20)->create();
+
+        $users->each(function ($user) {
+            if (rand(0, 99) < 30) {
+                Subscription::factory()->create([
+                    'user_id' => $user->id,
+                ]);
+            }
+        });
 
         $users->each(function ($user) {
             $gestures = Gesture::factory(5)->create([
