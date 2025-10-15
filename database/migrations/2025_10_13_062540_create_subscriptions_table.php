@@ -30,7 +30,9 @@ return new class extends Migration
             $table->index(['user_id','start_date']);
             $table->index(['user_id','end_date']);
         });
-        DB::statement('ALTER TABLE subscriptions ADD CONSTRAINT chk_dates CHECK (end_date is null or start_date < end_date);');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE subscriptions ADD CONSTRAINT chk_dates CHECK (end_date is null or start_date < end_date);');
+        }
 
     }
 

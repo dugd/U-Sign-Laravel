@@ -43,10 +43,9 @@ class Subscription extends Model
                 $q->whereNull('ends_at')
                   ->orWhere('ends_at', '>', $now);
             })
-            ->where(function ($q) {
-                // активна, якщо не скасована ДО старту
+            ->where(function ($q) use ($now) {
                 $q->whereNull('canceled_at')
-                  ->orWhereColumn('canceled_at', '>', 'starts_at');
+                  ->orWhere('canceled_at', '>', $now);
             });
     }
 }

@@ -25,16 +25,18 @@ return new class extends Migration
             }
         });
 
-        try {
-            DB::statement("
-                ALTER TABLE `subscriptions`
-                ADD CONSTRAINT `chk_dates`
-                CHECK (
-                    (starts_at IS NULL OR ends_at IS NULL OR ends_at > starts_at) AND
-                    (canceled_at IS NULL OR canceled_at > starts_at)
-                )
-            ");
-        } catch (\Throwable $e) {}
+        if (DB::getDriverName() !== 'sqlite') {
+            try {
+                DB::statement("
+                    ALTER TABLE `subscriptions`
+                    ADD CONSTRAINT `chk_dates`
+                    CHECK (
+                        (starts_at IS NULL OR ends_at IS NULL OR ends_at > starts_at) AND
+                        (canceled_at IS NULL OR canceled_at > starts_at)
+                    )
+                ");
+            } catch (\Throwable $e) {}
+        }
     }
 
     public function down(): void
@@ -55,15 +57,17 @@ return new class extends Migration
             }
         });
 
-        try {
-            DB::statement("
-                ALTER TABLE `subscriptions`
-                ADD CONSTRAINT `chk_dates`
-                CHECK (
-                    (start_date IS NULL OR end_date IS NULL OR end_date > start_date) AND
-                    (cancel_date IS NULL OR cancel_date > start_date)
-                )
-            ");
-        } catch (\Throwable $e) {}
+        if (DB::getDriverName() !== 'sqlite') {
+            try {
+                DB::statement("
+                    ALTER TABLE `subscriptions`
+                    ADD CONSTRAINT `chk_dates`
+                    CHECK (
+                        (start_date IS NULL OR end_date IS NULL OR end_date > start_date) AND
+                        (cancel_date IS NULL OR cancel_date > start_date)
+                    )
+                ");
+            } catch (\Throwable $e) {}
+        }
     }
 };
