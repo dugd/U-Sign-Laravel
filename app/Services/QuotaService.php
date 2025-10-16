@@ -22,11 +22,19 @@ class QuotaService
             case 'vip':
                 return 50;
             case 'pro':
-            case 'admin':
-                return null; // null means unlimited
+                return null;
             default:
                 return 10;
         }
+    }
+
+    public function limitForUser(User $user): ?int
+    {
+        if ($user->isAdmin()) {
+            return null;
+        }
+        $plan = $this->subscriptionService->currentPlan($user);
+        return $this->limitFor($plan);
     }
 
     public function used(User $user): int
@@ -36,8 +44,10 @@ class QuotaService
 
     public function canCreate(User $user): bool
     {
-        $plan = $this->subscriptionService->currentPlan($user);
-        $limit = $this->limitFor($plan);
+        if ($user->isAdmin()) {
+            return true;
+        }
+        $limit = $this->limitForUser($user);
         if ($limit === null) {
             return true;
         }

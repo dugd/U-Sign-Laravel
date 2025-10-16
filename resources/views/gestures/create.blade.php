@@ -1,4 +1,3 @@
-
 <x-site-layout>
     @section('title', 'Create Gesture')
     <x-site-container>
@@ -10,8 +9,7 @@
             $quotaService = app(\App\Services\QuotaService::class);
             $featureGate = app(\App\Services\FeatureGate::class);
             $used = $quotaService->used($user);
-            $plan = $user->plan ?? 'free';
-            $limit = $quotaService->limitFor($plan);
+            $limit = $quotaService->limitForUser($user);
             $canCreate = $quotaService->canCreate($user);
         @endphp
         <div class="mb-4 text-sm text-gray-700">
