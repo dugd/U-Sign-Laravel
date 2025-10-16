@@ -1,15 +1,17 @@
 <?php
 
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\GestureController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\MediaController;
-
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\GestureController as AdminGestureController;
 use App\Http\Controllers\Admin\CommentController as AdminCommentController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\GestureController as AdminGestureController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+
+use App\Http\Controllers\My\GestureController as MyGestureController;
+
+use App\Http\Controllers\GestureController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MediaController;
+use App\Http\Controllers\ProfileController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -63,5 +65,9 @@ Route::prefix('admin')->as('admin.')
             ->parameters(['comments' => 'comment'])
             ->names('comments');
     });
+
+Route::middleware('auth')->prefix('my')->as('my.')->group(function () {
+    Route::get('/gestures', [MyGestureController::class, 'index'])->name('gestures.index');
+});
 
 require __DIR__.'/auth.php';
