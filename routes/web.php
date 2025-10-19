@@ -12,6 +12,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubscriptionController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -70,6 +71,13 @@ Route::prefix('admin')->as('admin.')
 
 Route::middleware('auth')->prefix('my')->as('my.')->group(function () {
     Route::get('/gestures', [MyGestureController::class, 'index'])->name('gestures.index');
+});
+
+Route::middleware('auth')->prefix('subscription')->as('subscription.')->group(function () {
+    Route::get('/', [SubscriptionController::class, 'index'])->name('index');
+    Route::post('/switch', [SubscriptionController::class, 'switch'])->name('switch');
+    Route::post('/cancel', [SubscriptionController::class, 'cancel'])->name('cancel');
+    Route::get('/history', [SubscriptionController::class, 'history'])->name('history');
 });
 
 require __DIR__.'/auth.php';

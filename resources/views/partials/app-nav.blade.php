@@ -22,6 +22,12 @@
                         {{ __('My Gestures') }}
                     </x-nav-link>
                 </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('subscription.index')" :active="request()->routeIs('subscription.index')">
+                        {{ __('Subscriptions') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->

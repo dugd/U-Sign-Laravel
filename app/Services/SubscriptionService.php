@@ -41,4 +41,28 @@ class SubscriptionService
         $subscription->canceled_at = Carbon::now();
         return $subscription->save();
     }
+
+    public function switch(User $user, string $newPlan): Subscription
+    {
+        $current = $this->current($user);
+        if ($current) {
+            $current->canceled_at = Carbon::now();
+            // $current->ends_at = Carbon::now();
+            $current->save();
+        }
+
+        return $this->activate(
+            $user,
+            $newPlan,
+            Carbon::now(),
+            Carbon::now()->addMonth() // Monthly
+        );
+    }
+
+    public function history(User $user)
+    {
+        return Subscription::forUser($user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+    }
 }
