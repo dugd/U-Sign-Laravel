@@ -1,11 +1,11 @@
-<x-site-layout>
+<x-app-layout>
     <x-site-container>
         <header class="mb-6 flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-bold">Gestures</h1>
                 <p class="text-gray-600 mt-1">Browse, filter and discover sign gestures.</p>
                 <div class="mt-2 text-sm text-gray-500">
-                    {{ __('Used') }}: <span class="font-semibold">{{ $used }}</span> / <span class="font-semibold">{{ $limit }}</span>
+                    {{ __('Used') }}: <span class="font-semibold">{{ $used }}</span> / <span class="font-semibold">{{ $limit ? $limit : "∞" }}</span>
                 </div>
             </div>
             <a href="{{ route('gestures.create') }}" class="btn btn-primary px-4 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">+ {{ __('Add Gesture') }}</a>
