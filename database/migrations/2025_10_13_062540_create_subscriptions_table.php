@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->timestamp('start_date')->useCurrent();
             $table->timestamp('end_date')->nullable();
-            $table->boolean('cancel_date')->nullable();
+            $table->timestamp('cancel_date')->nullable();
 
             $table->json('meta')->nullable();
             $table->timestamps();
