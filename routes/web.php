@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\CommentController as AdminCommentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\GestureController as AdminGestureController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -64,9 +63,6 @@ Route::prefix('admin')->as('admin.')
         Route::resource('gestures', AdminGestureController::class)
             ->parameters(['gestures' => 'gesture'])
             ->names('gestures');
-        Route::resource('comments', AdminCommentController::class)
-            ->parameters(['comments' => 'comment'])
-            ->names('comments');
     });
 
 Route::middleware('auth')->prefix('my')->as('my.')->group(function () {
