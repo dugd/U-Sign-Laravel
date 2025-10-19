@@ -7,6 +7,13 @@ use App\Enums\UserRole;
 
 class FeatureGate
 {
+    protected SubscriptionService $subscriptionService;
+
+    public function __construct()
+    {
+        $this->subscriptionService = new SubscriptionService();
+    }
+
     /**
      * Check if the user has access to the feature.
      */
@@ -16,7 +23,7 @@ class FeatureGate
             return true;
         }
 
-        $plan = $user->plan ?? 'free';
+        $plan = $this->subscriptionService->currentPlan($user);
         switch ($key) {
             case 'profile.vanity_slug':
                 return in_array($plan, ['vip', 'pro']);

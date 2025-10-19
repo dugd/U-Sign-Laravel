@@ -47,6 +47,66 @@
             @endif
         </div>
 
+        {{-- Vanity Slug Field (VIP/Pro) --}}
+        <div>
+            <x-input-label for="vanity_slug" :value="__('Vanity Slug')" />
+            @if($canUseVanitySlug)
+                <x-text-input
+                    id="vanity_slug"
+                    name="vanity_slug"
+                    type="text"
+                    class="mt-1 block w-full"
+                    :value="old('vanity_slug', $user->vanity_slug)"
+                    placeholder="your-custom-slug"
+                    autocomplete="off" />
+                <p class="mt-1 text-xs text-gray-500">Your custom profile URL: /profile/your-custom-slug</p>
+                <x-input-error class="mt-2" :messages="$errors->get('vanity_slug')" />
+            @else
+                <x-text-input
+                    id="vanity_slug"
+                    type="text"
+                    class="mt-1 block w-full bg-gray-100"
+                    value="Available on VIP and Pro plans"
+                    disabled />
+                <p class="mt-1 text-xs text-gray-500">
+                    Your current plan: <span class="font-semibold">{{ ucfirst($currentPlan) }}</span>.
+                    Upgrade to VIP or Pro to use custom profile URLs.
+                </p>
+            @endif
+        </div>
+
+        {{-- Fingerspelling Gesture Field (Pro only) --}}
+        <div>
+            <x-input-label for="fingerspelling_gesture_id" :value="__('Fingerspelling Gesture')" />
+            @if($canUseFingerspelling)
+                <select
+                    id="fingerspelling_gesture_id"
+                    name="fingerspelling_gesture_id"
+                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                    <option value="">None</option>
+                    @foreach($userGestures as $gesture)
+                        <option
+                            value="{{ $gesture->id }}"
+                            @selected(old('fingerspelling_gesture_id', $user->fingerspelling_gesture_id) == $gesture->id)>
+                            {{ $gesture->translations->first()?->title ?? 'Untitled Gesture' }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="mt-1 text-xs text-gray-500">Select a gesture to display as your personal fingerspelling gesture on your profile.</p>
+                <x-input-error class="mt-2" :messages="$errors->get('fingerspelling_gesture_id')" />
+            @else
+                <select
+                    class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm"
+                    disabled>
+                    <option>Available on Pro plan</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500">
+                    Your current plan: <span class="font-semibold">{{ ucfirst($currentPlan) }}</span>.
+                    Upgrade to Pro to showcase your fingerspelling gesture.
+                </p>
+            @endif
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
